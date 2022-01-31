@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Mapvision</title>
+	<!-- CSS only -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+	<link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+	<div id="returnbox">
+		Resimde Algılanan Yazılar<div id="return"></div>
+	</div>
+	<input type="file" name="foto" id="foto">
+	<input type="submit" class="button-5" value="Gönder" id="gonder">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>	
+	<script>
+		async function getBase64(file) {
+			var reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = function () {
+				$.ajax({
+					url: "{% url 'isle' %}",
+					type: "post",
+					data: {'veri': reader.result, 'csrfmiddlewaretoken':'{{ csrf_token }}'},
+					success: (data)=>{
+						$("#return").html(data)
+					}
+				});
+			};
+			reader.onerror = function (error) {
+				console.log('Error: ', error);
+			};
+		}
+		document.getElementById("gonder").addEventListener('click',()=>{
+			var file = document.querySelector('#foto').files[0];
+			var a = getBase64(file)
+		})
+	</script>
+</body>
+</html>
